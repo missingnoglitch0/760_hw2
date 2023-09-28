@@ -1,5 +1,3 @@
-
-
 # CS760 Homework 2
 
 ## 1 A Simplified Decision Tree

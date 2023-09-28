@@ -2,7 +2,7 @@ import argparse
 from math import log
 
 # DEBUG = True
-DEBUG = True
+DEBUG = False
 
 ### 1. Implementing the tree data structure
 class Node:
@@ -148,10 +148,12 @@ def make_subtree(D, features_used={}): # where D is the set of training instance
         pass
     if len(C) == 0: # stopping criteria have been met
         # find majority class in D, make it N's class label. If not majority, predict y=1
-        print(f'Making leaf node, counting 1s and 0s in {D}')
+        if DEBUG:
+            print(f'Making leaf node, counting 1s and 0s in {D}')
         count_1 = sum(1 for i in D if i[2] == 1)
         count_0 = len(D) - count_1
-        print(f'count_1={count_1}, count_0={count_0}')
+        if DEBUG:
+            print(f'count_1={count_1}, count_0={count_0}')
         N.name = 1 if count_1 >= count_0 else 0 
         if DEBUG:
             print(f'Stopping Condition met, Node.name={N.name}')
@@ -170,7 +172,7 @@ def make_subtree(D, features_used={}): # where D is the set of training instance
                 right.append(entry)
         N = Node(j=j, c=c)
         if(DEBUG):
-            # print(f'Found worthy split, left={left}, right={right}')
+            print(f'Found worthy split, left={left}, right={right}')
             pass
         N.left = make_subtree(left, fu)
         N.right = make_subtree(right, fu)
