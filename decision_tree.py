@@ -2,7 +2,7 @@ import argparse
 from math import log
 
 # DEBUG = True
-DEBUG = False
+DEBUG = True
 
 ### 1. Implementing the tree data structure
 class Node:
@@ -63,9 +63,9 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
     # S = FindBestSplit(D, C)
     num_features = 2
     candidate_splits = []
-    ### Something is wrong here such that a crappy best split is being chosen.
-    ### Check math and test a split at c >= 0.2 for feature 2
-    ### This is all for input file D1.txt
+    if len(D) == 1: # If we only have one data point, don't even bother
+        return candidate_splits
+
     for j in range(num_features):
         if j in fu:
             if DEBUG:
@@ -77,8 +77,19 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
         entropy_before_split = H_D(run_j)
         if DEBUG:   
             print(f'ordered by x_{j}, entropy_before_split={entropy_before_split}')
+        
+        c_prev = run_j[0][j]
         for c_idx in range(1,len(D)):
             c = run_j[c_idx][j]
+
+            # Before we calculate things, make sure this split would actually split the array
+            # for example, with 3 entries of 0.0, the second entry should not be treated as a valid
+            # split threshold, as it doesn't actually separate entries
+            # since our split is x[j] >= c, 
+            if c == c_prev:
+                continue    # do not consider a split threshold we've already seen
+            else:
+                c_prev = c # we only consider this threshold if we haven't just seen it
 
             # Begin doing all calculations
             a = run_j[0:c_idx]
@@ -137,8 +148,10 @@ def make_subtree(D, features_used={}): # where D is the set of training instance
         pass
     if len(C) == 0: # stopping criteria have been met
         # find majority class in D, make it N's class label. If not majority, predict y=1
+        print(f'Making leaf node, counting 1s and 0s in {D}')
         count_1 = sum(1 for i in D if i[2] == 1)
         count_0 = len(D) - count_1
+        print(f'count_1={count_1}, count_0={count_0}')
         N.name = 1 if count_1 >= count_0 else 0 
         if DEBUG:
             print(f'Stopping Condition met, Node.name={N.name}')
