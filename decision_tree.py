@@ -1,8 +1,8 @@
 import argparse
 from math import log
 
-DEBUG = True
-# DEBUG = False
+# DEBUG = True
+DEBUG = False
 
 ### 1. Implementing the tree data structure
 class Node:
@@ -26,7 +26,7 @@ class Node:
     def PrintTree(self, r=0):
         # we first define how many preceding spaces to print for pretty formatting
         num_features = 2
-        cond_str = f'x[{num_features}] <= '
+        cond_str = f'x[{num_features}] >= '
         spacing = len(cond_str)
         if r > 0:
             spacing += r*(spacing+3)
@@ -35,7 +35,7 @@ class Node:
         if not self.name == None:
             print(self.name, end="")
         if not self.j == None:
-            print(f'x[{self.j}] <= {self.c}', end="")
+            print(f'x[{self.j}] >= {self.c}', end="")
         print()
 
         # lastly, we recurse into each of its children
@@ -94,7 +94,8 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
             # print(f'H_D_cond_a = {H_D_cond_a}, H_D_cond_b = {H_D_cond_b}')
             # print(f'Combined, {frac_a}*{H_D_cond_a} + {frac_b}*{H_D_cond_b} = {H_y_c}')
 
-            entropy_split = H_D_cond_a + H_D_cond_b
+            # entropy_split = H_D_cond_a + H_D_cond_b
+            entropy_split = entropy_before_split
             # check if 0, if so stop
             if entropy_split == 0:
                 if DEBUG:
@@ -109,7 +110,8 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
                     print('Gain Ratio = 0')
                 continue
                 # return None
-
+            candidate_split = (j,c, entropy_split, gain_ratio)
+            # print(candidate_split)
             candidate_splits.append((j,c, entropy_split, gain_ratio))
     
     return candidate_splits
@@ -119,6 +121,7 @@ def find_best_split(C): # where D is the set of training instances in this subtr
     gain_ratio_max_params = None
     for j, c, entropy_split, gain_ratio in C:
         if gain_ratio > gain_ratio_max_val:
+            gain_ratio_max_val = gain_ratio
             gain_ratio_max_params = (j, c)
     return gain_ratio_max_params
 
@@ -154,7 +157,8 @@ def make_subtree(D, features_used={}): # where D is the set of training instance
                 right.append(entry)
         N = Node(j=j, c=c)
         if(DEBUG):
-            print(f'Found worthy split, left={left}, right={right}')
+            # print(f'Found worthy split, left={left}, right={right}')
+            pass
         N.left = make_subtree(left, fu)
         N.right = make_subtree(right, fu)
     if DEBUG:
@@ -178,6 +182,25 @@ for line in f.readlines():
     observations.append(observation)
 if DEBUG:
     print("<<< We start making the decision tree >>>")
+
+observations_sorted = sorted(observations, key= lambda x: x[1])
+idx_cutoff = 0
+for idx in range(len(observations_sorted)):
+    if observations_sorted[idx][1] < 0.2:
+        idx_cutoff += 1
+        continue
+    else:
+        break 
+
+# observations_below_cutoff = observations_sorted[:idx_cutoff]
+# observations_above_cutoff = observations_sorted[idx_cutoff:]
+# print(observations_above_cutoff)
+# entropy_right = H_D(observations_below_cutoff)
+# entropy_left = H_D(observations_above_cutoff)
+# print(f'entropy_right={entropy_right}')
+# print(f'entropy_left={entropy_left}')
+
+# exit(0)
 
 root = make_subtree(observations)
 root.PrintTree()
