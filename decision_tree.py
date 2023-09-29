@@ -94,28 +94,36 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
             # Begin doing all calculations
             a = run_j[0:c_idx]
             frac_a = len(a) / len(run_j)
-            H_D_cond_a = H_D(a)
-
             b = run_j[c_idx:]
             frac_b = len(b) / len(run_j)
-            H_D_cond_b = H_D(b)
 
-            H_y_c = (frac_a * H_D_cond_a) + (frac_b * H_D_cond_b)
-            # print(f'for splits a={a} frac_a={frac_a}, b={b} frac_b{frac_b}, we have')
-            # print(f'H_D_cond_a = {H_D_cond_a}, H_D_cond_b = {H_D_cond_b}')
-            # print(f'Combined, {frac_a}*{H_D_cond_a} + {frac_b}*{H_D_cond_b} = {H_y_c}')
+            # entropy_split = - sum of { p(Child) * log_2(Child)}
+            # where p(Child) is the probability of an observation being in a given child
+            # i.e. the number of observations in a child / total observations
+            # i.e. frac_a, frac_b
+            # TOOD check for extremes
+            if frac_a == 0 or frac_b == 0:
+                entropy_split = 0
+            else:
+                entropy_split = - (frac_a*log(2, frac_a) + frac_b*log(2, frac_b))
 
-            # entropy_split = H_D_cond_a + H_D_cond_b
-            entropy_split = entropy_before_split
             # check if 0, if so stop
             if entropy_split == 0:
                 if DEBUG:
                     print("Split Entropy = 0")
                 continue
-            
+
+            H_D_cond_a = H_D(a)
+            H_D_cond_b = H_D(b)
+            H_y_c = (frac_a * H_D_cond_a) + (frac_b * H_D_cond_b)
             info_gain = entropy_before_split - H_y_c
             gain_ratio = info_gain / entropy_split
+
+            # print(f'for splits a={a} frac_a={frac_a}, b={b} frac_b{frac_b}, we have')
+            # print(f'H_D_cond_a = {H_D_cond_a}, H_D_cond_b = {H_D_cond_b}')
+            # print(f'Combined, {frac_a}*{H_D_cond_a} + {frac_b}*{H_D_cond_b} = {H_y_c}')
             # check if 0, if so stop
+            
             if gain_ratio == 0:
                 if DEBUG:
                     print('Gain Ratio = 0')
