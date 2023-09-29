@@ -76,10 +76,12 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
         # print(run_j)
         entropy_before_split = H_D(run_j)
         if DEBUG:   
-            print(f'ordered by x_{j}, entropy_before_split={entropy_before_split}')
+            # print(f'ordered by x_{j}, entropy_before_split={entropy_before_split}')
+            pass
         
-        c_prev = run_j[0][j]
-        for c_idx in range(1,len(D)):
+        # c_prev = run_j[0][j]
+        c_prev = None
+        for c_idx in range(0,len(D)):
             c = run_j[c_idx][j]
 
             # Before we calculate things, make sure this split would actually split the array
@@ -107,10 +109,14 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
             else:
                 entropy_split = - (frac_a*log(2, frac_a) + frac_b*log(2, frac_b))
 
+            ### 2.3
+            if DEBUG:
+                print(f'For cut X[{j}] >= {c}, ', end='')
+
             # check if 0, if so stop
             if entropy_split == 0:
                 if DEBUG:
-                    print("Split Entropy = 0")
+                    print(f'Split Entropy = 0, mutual information={entropy_before_split}')
                 continue
 
             H_D_cond_a = H_D(a)
@@ -123,10 +129,10 @@ def determine_candidate_splits(D, features_used): # where D is the set of traini
             # print(f'H_D_cond_a = {H_D_cond_a}, H_D_cond_b = {H_D_cond_b}')
             # print(f'Combined, {frac_a}*{H_D_cond_a} + {frac_b}*{H_D_cond_b} = {H_y_c}')
             # check if 0, if so stop
-            
+
+            if DEBUG:
+                print(f'Gain Ratio = {gain_ratio}')
             if gain_ratio == 0:
-                if DEBUG:
-                    print('Gain Ratio = 0')
                 continue
                 # return None
             candidate_split = (j,c, entropy_split, gain_ratio)
@@ -189,48 +195,31 @@ def make_subtree(D, features_used={}): # where D is the set of training instance
     return N
 ### 2 end
 
-# This allows the user to pass a file path in and have its tree generated
-parser = argparse.ArgumentParser()
-parser.add_argument('filepath')
-args = parser.parse_args()
-filepath = args.filepath
+def get_observations(filepath):
+    observations = []
+    f = open(filepath)
+    for line in f.readlines():
+        # print(line.strip())
+        observation = tuple(float(e) for e in line.strip().split(sep=" "))
+        observations.append(observation)
+    return observations
 
-# filename = "Homework 2 data/D3leaves.txt"
+if __name__ == "__main__":
+    # This allows the user to pass a file path in and have its tree generated
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filepath')
+    args = parser.parse_args()
+    filepath = args.filepath
+    observations = get_observations(filepath)
 
-observations = []
-f = open(filepath)
-for line in f.readlines():
-    # print(line.strip())
-    observation = tuple(float(e) for e in line.strip().split(sep=" "))
-    observations.append(observation)
-if DEBUG:
-    print("<<< We start making the decision tree >>>")
+    if DEBUG:
+            print("<<< We start making the decision tree >>>")
+    root = make_subtree(observations)
+    root.PrintTree()
 
-observations_sorted = sorted(observations, key= lambda x: x[1])
-idx_cutoff = 0
-for idx in range(len(observations_sorted)):
-    if observations_sorted[idx][1] < 0.2:
-        idx_cutoff += 1
-        continue
-    else:
-        break 
-
-# observations_below_cutoff = observations_sorted[:idx_cutoff]
-# observations_above_cutoff = observations_sorted[idx_cutoff:]
-# print(observations_above_cutoff)
-# entropy_right = H_D(observations_below_cutoff)
-# entropy_left = H_D(observations_above_cutoff)
-# print(f'entropy_right={entropy_right}')
-# print(f'entropy_left={entropy_left}')
-
-# exit(0)
-
-root = make_subtree(observations)
-root.PrintTree()
-
-### We ask user for new points to classify
-while(True):
-    print("Please provide a new point to classify (should have form `x0 x1` similar to input files)")
-    new_point = tuple(float(e) for e in input().strip().split(sep=" "))
-    point_class = root.classify(new_point)
-    print(f'The predicted class for this point is {point_class}\n')
+    ### We ask user for new points to classify
+    while(True):
+        print("Please provide a new point to classify (should have form `x0 x1` similar to input files)")
+        new_point = tuple(float(e) for e in input().strip().split(sep=" "))
+        point_class = root.classify(new_point)
+        print(f'The predicted class for this point is {point_class}\n')
