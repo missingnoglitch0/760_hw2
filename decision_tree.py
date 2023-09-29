@@ -23,6 +23,14 @@ class Node:
             return self.right.classify(data_point)
     ### 3 end
 
+    def count_nodes(self):
+        result = 1
+        if not self.left == None:
+            result += self.left.count_nodes()
+        if not self.right == None:
+            result += self.right.count_nodes()
+        return result
+
     def PrintTree(self, r=0):
         # we first define how many preceding spaces to print for pretty formatting
         num_features = 2
