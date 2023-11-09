@@ -177,8 +177,8 @@
 %%% NOTE:  Replace 'NAME HERE' etc., and delete any "\red{}" wrappers (so it won't show up as red)
 
 \author{
-\red{$>>$NAME HERE$<<$} \\
-\red{$>>$ID HERE$<<$}\\
+\red{$>>$Martin Diges$<<$} \\
+\red{$>>$9080689699$<<$}\\
 }
 
 \date{}
@@ -190,6 +190,10 @@
 
 \textbf{Instructions:}
 Use this latex file as a template to develop your homework. Submit your homework on time as a single pdf file. Please wrap your code and upload to a public GitHub repo, then attach the link below the instructions so that we can access it. Answers to the questions that are not within the pdf are not accepted. This includes external links or answers attached to the code implementation. Late submissions may not be accepted. You can choose any programming language (i.e. python, R, or MATLAB). Please check Piazza for updates about the homework. It is ok to share the experiments results and compare them with each other.
+
+\\\\
+\hypersetup{colorlinks=true, linkcolor=cyan}
+\url{https://github.com/missingnoglitch0/cs760/tree/main/hw5}
 
 \vspace{0.1in}
 
@@ -214,10 +218,50 @@ J(\mu_1^K, f; X_1^n) = \sum_{i=1}^n \sum_{k=1}^K \indfone(f(X_i) = k) \|X_i - \m
 Let $\Jcal_K(X_1^n) = \min_{\mu_1^K, f} J(\mu_1^K, f; X_1^n)$. Prove that
 $\Jcal_{K}(X_1^n)$ is a non-increasing function of $K$.
 
+\textbf{ANSWER}
+
+Suppose $\Jcal_K(X_1^n) = e'$ for some $\mu_1^K'$ and some $f'$. \\
+For $K+1$, we can choose
+\begin{itemize}
+    \item $f''(X_i) = f'(X_i)$
+    \item $\mu_1^{K+1}'' = \mu_1^K' + \mu_{K+1}$ where $\mu_{K+1}$ is such that $f''(X_i) = f'(X_i) \neq K+1$. For the traditional algorithm, this means $\mu_{K+1}$ satisfies $||X_i - \mu_{K+1}||^2 > ||X_i - \mu_{i}||^2$ for $i \leq K$
+\end{itemize}
+We see then that
+
+$$ J(\mu_1^{K+1}'', f''; X_1^n) = \sum_{i=1}^n \sum_{k=1}^{K+1} \indfone(f''(X_i) = k) \|X_i - \mu_k\|^2 $$
+$$ = \sum_{i=1}^n \left( \left( \sum_{k=1}^{K} \indfone(f''(X_i) = k) \|X_i - \mu_k\|^2 \right) + \indfone(f''(X_i) = K+1) \|X_i - \mu_{K+1}\|^2 \right)$$
+$$ = \sum_{i=1}^n \left( \left( \sum_{k=1}^{K} \indfone(f''(X_i) = k) \|X_i - \mu_k\|^2 \right) + 0 \right) $$
+$$ = \sum_{i=1}^n \sum_{k=1}^{K} \indfone(f''(X_i) = k) \|X_i - \mu_k\|^2 $$
+$$ = \sum_{i=1}^n \sum_{k=1}^{K} \indfone(f'(X_i) = k) \|X_i - \mu_k\|^2 = J(\mu_1^{K}', f'; X_1^n)$$
+
+$\Jcal_{K+1}(X_1^n) = \min_{\mu_1^{K+1}, f} J(\mu_1^{K+1}, f; X_1^n) \leq J(\mu_1^{K+1}'', f''; X_1^n) = J(\mu_1^{K}', f'; X_1^n) = \Jcal_K(X_1^n)$
+$$ \Jcal_{K+1}(X_1^n) \leq \Jcal_K(X_1^n) $$
+
 \item \textbf{(8 Points)}
 Consider the K-means (Lloyd's) clustering algorithm we studied in class. We
 terminate the algorithm when there are no changes to the objective.
 Show that the algorithm terminates in a finite number of steps.
+
+\textbf{ANSWER}
+
+From class, we have the following K-means algorithm:
+\begin{enumerate}
+    \item Select k cluster centers
+    \item For each point, determine its cluster assignment by finding the closest center in Euclidean space
+    \item Update all cluster centers as the centroids of the points assigned to them
+    \item Repeat steps 2, 3 until there are no changes to the objective
+\end{enumerate}
+
+We define $J_{beg}$ as the objective before an iteration of the algorithm (before step 2). \\
+We define $J_{end}$ as the objective calculated at the end of step 3.
+
+If there was no change in point assignment, then $J_{end} = J_{beg}$ $\leftrightarrow$\\
+If $J_{end} \neq J_{beg}$, then there must have been some change in point assignments during the step.
+\begin{itemize}
+    \item If $J_{end} > J_{beg}$, then at least one point $X_i$'s assignment changed from $f(X_i) = a$ to $f(X_i) = b$ and resutled in $||X_i - \mu_b||^2 > ||X_i - \mu_a||^2$. However, we know $||X_i - \mu_b|| \leq ||X_i - \mu_a||$ for the assignment to have changed, which is a contradiction. Thus, it cannot be that $J_{end} > J_{beg}$, meaning $J_{end} \leq J_{beg}$.
+    \item If $J_{end} = J_{beg}$, the algorithm terminates.
+    \item If $J_{end} < J_{beg}$, the algorithm advances to the next iteration. However, the point assignments at the end of Step 3 $a_{cur}$ must be different from other assignments examined in the past $a_{past}$, i.e. $a_{cur} \neq a_{past}$. This is because $a_{cur} = a_{past} \implies (J_{end} < J_{beg} \leq J_{past} \implies J_{end} < J_{end})$, which is a contradiction. Thus, the number of times the algorithm advances to the next iteration must be bounded by the number of distinct point assignments, which is finite.
+\end{itemize}
 
 \end{enumerate}
 
@@ -288,6 +332,20 @@ K-means, means for GMMs) and map them to the distribution with the closest mean.
 Points break down: 7 points each for implementation of each method, 6 points for reporting of
 evaluation metrics.
 
+\textbf{ANSWER}
+
+Implementations for each method can be found in the GitHub repository, in clustering.ipynb
+Running the entire notebook should yield results similar to below within a minute:
+
+For the kmeans algorithm:
+
+\includegraphics[width=2in]{hw5/1_2_kmeans.png} \hspace{0.4in}
+
+For the GMM algorithm:
+
+\includegraphics[width=2in]{hw5/1_2_gmm.png} \hspace{0.4in}
+
+
 
 \section{Linear Dimensionality Reduction}
 
@@ -301,6 +359,39 @@ Principal Components Analysis (PCA) is a popular method for linear dimensionalit
 Suppose we wish to find the first direction $a_1$ (such that $a_1^\top a_1 = 1$) to maximize $\frac{1}{n} \sum_i (a_1^\top x_i)^2$.
 Show that $a_1$ is the first right singular vector of $X$.
 
+\textbf{ANSWER}
+
+My linear algebra skills are not well developed enough to rigorously prove the statement above at this moment, but here is an explanation in case it is of any aid.
+
+From doing SVD, we get matrices U, $\Sigma$, V. The first right vector of X is the first vector of V and is associated with the greatest singular value in $\Sigma$. Thanks to V being unitary, $a_1$ satisfies $a_1^\top a_1 = 1$. Furthermore, since we know we can reconstruct $X = U \Sigma V$, then the greatest $\Sigma V'$ where $V'$ only has one nonzero column will be achieved where that column is $a_1$, as this maximizes the product of a unitary vector and some scalar, in this case the greatest value in $\Sigma$.
+
+% 1.2 Are my expressions sensible for GMM?
+
+% My understanding of the singular vector based on online sources: the vector which maximises X*v
+% I do not understand the intuition. I've seen that the singular vector is the vector which fits the data through the origin, but this is not obvious and the definition is kinda dookie
+
+
+% X @ X^T <-- yields square matrix DxD, find eigenvectors. These should be of length D, which may be what we seek
+% first <-- biggest eigenvalue
+
+% SVD gives U, SIGMA, V, which are all unitary
+% where U and V satisfy U^T U = I_d, so forth for V
+% V is eigenvectors of X X^T
+% U is eigenvectros of X^T X
+
+% Sigma is a diagonal matrix, it is a matrix with the (square root of the) eigenvalues on the diagonal
+
+% A = U Sigma V^T
+
+% I'm guessing part 2 follows somewhat naturally from part 1
+
+
+
+% 2.2 Seems to me like we're minimizing the sum of squares, hence doing multiple regression where we have vectors instead of parameters, as well as one b vector constant
+
+% I'm guessing we do exactly as the hint says, applying SVD to x, taking its first d singular values. This should be our A. Lastly, we can express our x_i as the elementwise product of z_i and A
+ 
+
 \item  \textbf{(6 Points)}
 Given $a_1, \dots, a_k$, let $A_k = [a_1, \dots, a_k]$ and 
 $\tilde{x}_i = x_i - A_kA_k^\top x_i$. We wish to find $a_{k+1}$, to maximize
@@ -310,6 +401,9 @@ $(k+1)^{th}$ right singular vector of $X$.
 
 \end{enumerate}
 
+
+
+%%% Question 2.2 
 
 \subsection{Dimensionality reduction via optimization (22 points)}
 
@@ -338,6 +432,9 @@ Here, $\|A\|^2_F = \sum_{i,j} A_{ij}^2$ is the Frobenius norm of a matrix.
 
 
 \begin{enumerate}
+
+%%% 2.2.1
+
 \item \textbf{(3 Points)}
 Let $M\in\RR^{d\times d}$ be an arbitrary invertible matrix and $p\in\RR^{d}$ be an arbitrary vector.
 Denote, $A_2 = A_1M^{-1}$, $b_2 = b_1- A_1M^{-1}p$ and $Z_2 = Z_1 M^\top +
@@ -359,12 +456,34 @@ Here, ${\bf 1}_d = [1, 1 \dots, 1]^\top \in\RR^d$ and $I_d$  is the $d\times d$ 
 
 \begin{enumerate}
 \setcounter{enumi}{1}
+
+
+%%% 2.2.2
+
 \item \textbf{(16 Points)}
 Outline a procedure to solve the above problem. Specify how you
 would obtain $A, Z, b$ which minimize the objective and satisfy the constraints.
 
 \textbf{Hint: }The rank $k$ approximation of a matrix in Frobenius norm is obtained by
 taking its SVD and then zeroing out all but the first $k$ singular values.
+
+\textbf{ANSWER}
+
+We are trying to minimize the objective 
+\begin{equation}
+J(A,b,Z) = \frac{1}{n} \sum_{i=1}^n \|x_i - Az_i - b\|^2 = \| X - ZA^\top - \one b^\top\|_F^2.
+\label{eqn:dimobj}
+\end{equation}
+This can be thought of as the Frobenius norm of the difference between the data and our reconstruction/approximation of the data. As we want to minimize this, we know our objective is to obtain $Z, A, b$ s.t. $ ZA^\top + \one b^\top \approx X$.
+
+Per the provided hint, we can obtain an approximation of $X$ by taking its SVD and zeroing out all but the first $k$ singular values.
+
+One way to proceed which I tried was to set b = the mean of X, then projecting the demeaned X onto the first $k$ singular vectors (A) to obtain Z.
+
+The below is speculation:
+I noticed that this problem appeared close in its formulation to least squares regression. We want to regress X on our singular vectors A such that we obtain representations Z and intercept b. Like regression, but instead of obtaining parameters we obtain vectors. My idea, which I did not have time to implement, was to run this regression. 
+
+%%% 2.2.3
 
 \item \textbf{(3 Points)}
 You are given a point $x_*$ in the original $D$ dimensional space.
@@ -373,11 +492,14 @@ representation $z_*$ for this new point.
 (If $x_*$ is some original point $x_i$ from the $D$--dimensional space, it shoud be the
 $d$--dimensional representation $z_i$.)
 
-
+$z_i = (x_i - b) A^\top$
+ 
 \end{enumerate}
 
 
 \subsection{Experiment (34 points)}
+
+\textbf{FOR ANSWERS, PLEASE GO TO THE BOTTOM OF THE DOCUMENT}
 
 Here we will compare the above three methods on two data sets. 
 
@@ -436,42 +558,87 @@ reconstructed points don't seem to well represent the original points. Why is
 this? \\
 \textbf{Hint: } Which subspace is Buggy PCA trying to project the points
 onto?
+
+\textbf{ANSWER}
+
+With PCA, we try to find a direction vector which captures as much variance as possible. However, since we do not demean for Buggy PCA, there is no frame of reference for what the points are varying relative to. Thus, the points further away from the origin contribute more toward the principal component. This results in the direction vector being roughly in the direction of the cloud of points, as most of the variance relative to the origin is achieved in that direction.
+
 \item The error criterion we are using is the average squared error 
 between the original points and the reconstructed points.
 In both examples DRO and demeaned PCA achieves the lowest error among all
 methods. 
 Is this surprising? Why?
+
+\textbf{ANSWER}
+
+It is not terribly surprising because the methods are somewhat analogous to each other. 
+For one, PCA extracts the $d$ largest eigenvalues and accompanying eigenvectors.
+DRO extracts the $d$ largest singular values and accompanying singular vectors for its calculations.
+Both demeaned PCA and DRO keep a vector (mean of data for PCA, vector b for DRO) which is subtracted and added back during "training" and reconstruction respectively.
+
 \end{enumerate}
 
 \item Point allocation:
 \begin{itemize}
 \item Implementation of the three PCA methods: \textbf{(6 Points)}
+
+\textbf{ANSWER}
+
+Please see the GitHub repository, specifically the PCA.ipynb file. The PCA methods are implemented within a PCA class which supports "training" and reconstruction of points, including the necessary modifications for each variant (buggy, demeaned, normalized). Fields V and Z within the class allow parameters to easily be retrieved.
+
 \item Implementation of DRO: \textbf{(6 points)}
+
+\textbf{ANSWER}
+
+Please see the PCA.ipynb file referenced above for the DRO class with analogous functionality to the PCA class.
+
 \item Plots showing original points and reconstructed points for 2D dataset for each one of the 4 methods: \textbf{(10 points)}
+
+\textbf{ANSWER}
+
+\includegraphics[width=4in]{hw5/PCA_buggy.png} \\
+\includegraphics[width=4in]{hw5/PCA_demeaned.png} \\
+\includegraphics[width=4in]{hw5/PCA_normalized.png} \\
+\includegraphics[width=4in]{hw5/DRO.png} \\
+
+\newpage
 \item Implementing reconstructions and reporting results for each one of the 4 methods for the 2 datasets: \textbf{(5 points)}
+
+\textbf{ANSWER}
+\\
+Please see the reconstruct() functions within each of the classes for implementations of reconstructions.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{recon_error_2D.png}
+    \caption{for data_2D.csv}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{recon_error_1000D.png}
+    \caption{for data_1000D.csv}
+    \label{fig:enter-label}
+\end{figure}
+
+
 \item Choice of $d$ for $1000D$ dataset and appropriate justification:
 \textbf{(3 Points)}
+
+\textbf{ANSWER}
+
+\includegraphics[width=4in]{hw5/choice_of_d.png} \\
+
+Based on the graph shown here (and of course checking the table to ensure the right dimension), I chose dimension of 30, since the gains in reduced error of adding additional dimensions sharply dropped off.
+
 \item Questions \textbf{(4 Points)}
-\end{itemize}
+
+\textbf{Questions answered where they are stated (i.e. before the "Point allocation" section}
 
 \end{itemize}
 
-
-%\vspace{0.1in}
-
-\vspace{0.2in}
-
-\textbf{Answer format:}  \\
-The graph bellow is in example of how a plot of one of the algorithms for the 2D dataset may look like: \\
-\includegraphics[width=3in]{buggy_pca} \hspace{0.4in}
-\\
-
-The blue circles are from the original dataset and the red crosses are the reconstructed points. \\
-
-And this is how the reconstruction error may look like for Buggy PCA for the 2D dataset: 0.886903
-
-
-
+\end{itemize}
 
 
 
