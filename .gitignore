@@ -1,3 +1,10 @@
 Homework * data/
 hw3Data-3/
 hw*/data
+
+# hw6
+gan_base_losses_written.txt
+gan_mod_losses_written.txt
+input/
+outputs/
+gan_graph.ipynb
