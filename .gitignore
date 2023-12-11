@@ -10,3 +10,9 @@ outputs/
 gan_graph.ipynb
 
 # hw7
+*__pycache__*
+hw7/Results
+hw7/.venv
+hw7/HW7.*
+!HW7.pdf
+!HW7.tex
