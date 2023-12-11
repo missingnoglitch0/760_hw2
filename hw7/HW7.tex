@@ -308,6 +308,7 @@ Again for this command, the expected reward is given for a correct solution. If 
 
 Achieves a best performing policy with -13 reward.
 
+\newpage
 \section{Q-learning [20 pts]}
 For this question you can either reimplement your Q-learning code or use your previous implementation. You will be using a custom made MDP for analysis. Consider the following Markov Decision Process.
 It has two states $s$. It has two actions $a$: move and stay. The state transition is deterministic: ``move'' moves to the other state, while ``stay' stays at the current state. The reward $r$ is 0 for move,  1 for stay. There is a discounting factor $\gamma=0.8$.
@@ -333,12 +334,30 @@ Let the step size parameter $\alpha=0.5$.
 
 \begin{enumerate}
 \item (5 pts) Run Q-learning for 200 steps with a deterministic greedy behavior policy: at each state $s_t$ use the best action $a_t \in \argmax_a Q(s_t,a)$ indicated by the current action-value table. If there is a tie, prefer move. Show the action-value table at the end.
+\\\{'A': \{'STAY': 0, 'MOVE': 0.0\}, 'B': \{'STAY': 0, 'MOVE': 0.0\}\}
 
 \item (5 pts) Reset and repeat the above, but with an $\epsilon$-greedy behavior policy: at each state $s_t$, with probability $1-\epsilon$ choose what the current Q table says is the best action: $\argmax_a Q(s_t,a)$; Break ties arbitrarily. Otherwise, (with probability $\epsilon$) uniformly chooses between move and stay (move or stay both with 1/2 probability). Use $\epsilon=0.5$.
+\\\{'A': \{'STAY': 4.999975828096329, 'MOVE': 3.687284964530014\}, 'B': \{'STAY': 4.700927716064728, 'MOVE': 3.999969476317586\}\}
 
 \item (5 pts) Without doing simulation, use Bellman equation to derive the true action-value table induced by the MDP. That is, calculate the true optimal action-values by hand.
 
+From the parameters supplied earlier, we have
+$$Q(s_t, a_t) = (0.5) Q(s_t, a_t) + (0.5) \left( r_t + 0.8 \max_{a'} Q(s_{t+1}, a') \right)$$
+$$Q(s_t, a_t) = \left( r_t + 0.8 \max_{a'} Q(s_{t+1}, a') \right)$$
+$$Q(s_t, a_t) = \left( r_t + 0.8 \max (Q(s_{t+1}, STAY),Q(s_{t+1}, MOVE))  \right)$$
+$$Q(s_t, STAY) = \left( 1 + 0.8 \max (Q(s_{t+1}, STAY),Q(s_{t+1}, MOVE)) \right)$$
+$$Q(s_t, MOVE) = \left( 0 + 0.8 \max (Q(s_{t+1}, STAY),Q(s_{t+1}, MOVE)) \right)$$
+It follows that $Q(s_t, STAY) > Q(s_t, MOVE)$. Since STAY is the max valued action, we have that
+$$Q(s_t, STAY) = 1 + 0.8 Q(s_{t+1}, STAY)$$
+$$Q(s_t, STAY) * (1-0.8) = 1$$
+$$Q(s_t, STAY) = \frac{1}{1-0.8} = \frac{1}{0.2} = 5$$
+and 
+$$Q(s_t, MOVE) = 0 + 0.8 Q(s_{t+1}, STAY) = 0.8 (5) = 4$$
+
 \item (5 pts) To the extent that you obtain different solutions for each question, explain why the action-values  differ.
+\\For 1., We see that the action-value table retains its starting default values of 0 for all entries. This is because we explore deterministically and prefer to move when entires for stay and move are equal. Hence, we move and have a reward of 0. The updated action-values are always 0, so we keep moving and setting action-values to 0.
+\\For 2., the $\epsilon$-greedy policy makes it more likely for random actions to be chosen and thus explored. This means the STAY action is sometimes chosen, leading to a $> 0$ action-value for each of our states. We thereby obtain nonzero action values.
+\\In 3., we find the steady-state value for our $\epsilon$-greedy behavior, which is the set of values where applying our update rule would not lead to any changes in action-values.
 
 \section{A2C (Extra credit)}
 \subsection{Implementation}
