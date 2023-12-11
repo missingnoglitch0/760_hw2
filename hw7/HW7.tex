@@ -128,8 +128,8 @@
 %%% NOTE:  Replace 'NAME HERE' etc., and delete any "\red{}" wrappers (so it won't show up as red)
 
 \author{
-\red{$>>$NAME HERE$<<$} \\
-\red{$>>$ID HERE$<<$}\\
+\red{$>>$Martin Diges$<<$} \\
+\red{$>>$9080689699$<<$}\\
 } 
 
 \date{}
@@ -141,6 +141,9 @@
 \textbf{Instructions:}
 Use this latex file as a template to develop your homework. Please submit a single pdf to Canvas. Late submissions may not be accepted. You can choose any programming language (i.e. python, R, or MATLAB). Please check Piazza for updates about the homework.
 \vspace{0.1in}
+\\\\
+% \hypersetup{colorlinks=true, linkcolor=cyan}
+\url{https://github.com/missingnoglitch0/cs760/tree/main/hw7}
 
 \section{Getting Started}
 Before you can complete the exercises, you will need to setup the code.
@@ -165,7 +168,22 @@ The \verb|ValueIteration| class in \verb|solvers/Value_Iteration.py| contains th
 
 \subsubsection*{Submission [6 pts each + 10 pts for code submission]}
 
-Submit a screenshot containing your \verb|train_episode| and \verb|create_greedy_policy| methods (10 points). 
+Submit a screenshot containing your \verb|train_episode| and \verb|create_greedy_policy| methods (10 points).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6in]{2_train_episode.png}
+    \caption{train\_episode()}
+    \label{fig:gan_q1_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6in]{2_create_greedy_policy.png}
+    \caption{create\_greedy\_policy() and auxiliary function q()}
+    \label{fig:gan_q1_loss}
+\end{figure}
+
 
 \vspace{5mm}
 For these 5 commands. Report the episode it converges at and the reward it achieves. See examples for what we expect. An example is: \begin{verbatim}
@@ -180,10 +198,20 @@ Converges to a reward of \verb|___| in \verb|___| episodes.
 Submission Commands:
 \begin{enumerate} 
     \item   python run.py -s vi -d Gridworld -e 200 -g 0.05
+            \\Converges to a reward of -14.51 in 3 episodes.
+            
     \item   python run.py -s vi -d Gridworld -e 200 -g 0.2
-    \item  python run.py -s vi -d FrozenLake-v0 -e 500 -g 0.5   
-    \item  python run.py -s vi -d FrozenLake-v0 -e 500 -g 0.9  
-    \item python run.py -s vi -d FrozenLake-v0 -e 500 -g 0.75 
+            \\Converges to a reward of -16.16 in 3 episodes.
+            
+    \item  python run.py -s vi -d FrozenLake-v0 -e 500 -g 0.5
+            \\(please see Piazza @336 for why the values below may differ from expected)
+            \\Converges to a reward of 0.6374 in 14 episodes.
+            
+    \item  python run.py -s vi -d FrozenLake-v0 -e 500 -g 0.9 
+            \\Converges to a reward of 2.1760 in 72 episodes. 
+            
+    \item python run.py -s vi -d FrozenLake-v0 -e 500 -g 0.75
+            \\Converges to a reward of 1.1316 in 34 episodes.
 \end{enumerate}
     
 
@@ -215,14 +243,57 @@ The \verb|QLearning| class in \verb|solvers\Q_Learning.py| contains the implemen
 
 Submit a screenshot containing your \verb|train_episode|, \verb|create_greedy_policy| and 
 
-\verb|make_epsilon_greedy_policy| methods (10 points). 
+\verb|make_epsilon_greedy_policy| methods (10 points).
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6in]{3_train_episode.png}
+    \caption{train\_episode()}
+    \label{fig:gan_q1_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6in]{3_make_epsilon_greedy_policy.png}
+    \caption{make\_epsilon\_greedy\_policy()}
+    \label{fig:gan_q1_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6in]{3_create_greedy_policy.png}
+    \caption{create\_greedy\_policy()}
+    \label{fig:gan_q1_loss}
+\end{figure}
+
+\newpage
 Report the reward for these 3 commands with your implementation (10 points each) by submitting the "Episode Reward over Time" plot for each command:
 
 \begin{enumerate}
     \item  python run.py -s ql -d CliffWalking -e 100 -a 0.2 -g 0.9 -p 0.1
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=6in]{3_1_EROT.png}
+                % \caption{create\_greedy\_policy()}
+                \label{fig:gan_q1_loss}
+            \end{figure}
+            
     \item  python run.py -s ql -d CliffWalking -e 100 -a 0.8 -g 0.5 -p 0.1  
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=6in]{3_2_EROT.png}
+                % \caption{create\_greedy\_policy()}
+                \label{fig:gan_q1_loss}
+            \end{figure}
+    
     \item  python run.py -s ql -d CliffWalking -e 500 -a 0.6 -g 0.8 -p 0.1   
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=6in]{3_3_EROT.png}
+                % \caption{create\_greedy\_policy()}
+                \label{fig:gan_q1_loss}
+            \end{figure}
+    
 \end{enumerate}
 
 For reference, command 1 should end with a reward around -60, command 2 should end with a reward around -25 and command 3 should end with a reward around -40.

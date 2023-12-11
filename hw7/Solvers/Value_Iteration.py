@@ -59,17 +59,21 @@ class ValueIteration(AbstractSolver):
                     Once those values have been updated, thats it for this function/class
         """
 
+        state = self.env.reset()
+
         # you can add variables here if it is helpful
+        policy = self.create_greedy_policy()
 
         # Update the estimated value of each state
+        V_new = np.ndarray(self.env.nS)
         for each_state in range(self.env.nS):
-
-            ###################################################
-            #            Compute self.V here                  #
-            # Do a one-step lookahead to find the best action #
-            #           YOUR IMPLEMENTATION HERE              #
-            ###################################################
-            raise NotImplementedError
+            s = each_state
+            a_opt = policy(s)
+            v_val = self.q(s, a_opt)
+            V_new[s] = v_val
+            
+        self.V = V_new # only change values of V once VI has happened. This way all calculations
+        # are done with respect to a static self.V
 
         # Dont worry about this part
         self.statistics[Statistics.Rewards.value] = np.sum(self.V)
@@ -101,13 +105,19 @@ class ValueIteration(AbstractSolver):
                     number of actions in the environment
             """
 
-            ################################
-            #   YOUR IMPLEMENTATION HERE   #
-            ################################
-            raise NotImplementedError
+            num_actions = self.env.nA
+            a_values = np.ndarray(num_actions)
+            for a in range(num_actions):
+                a_values[a] = self.q(state, a)
+            return np.argmax(a_values)
 
         return policy_fn
 
+    def q(self, s, a):
+        v_a = 0
+        for p_s_next, s_next, r, done in self.env.P[s][a]:
+            v_a += p_s_next * (r + self.options.gamma * self.V[s_next])
+        return v_a
 
 class PriorityQueue:
     """

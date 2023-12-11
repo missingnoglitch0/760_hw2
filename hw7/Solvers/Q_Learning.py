@@ -44,13 +44,24 @@ class QLearning(AbstractSolver):
             next_state, reward, done, _ = self.step(action): advance one step in the environment
         """
 
+        policy = self.create_greedy_policy()
+        alpha = self.options.alpha
+        gamma = self.options.gamma
+
         # Reset the environment
         state = self.env.reset()
+        s = state
 
-        ################################
-        #   YOUR IMPLEMENTATION HERE   #
-        ################################
+        for i in range(self.options.steps):
+            a_opt = self.epsilon_greedy_action(s)
+            s_next, r, done, _ = self.step(a_opt)
+            
+            a_prime_opt = policy(s_next)
+            self.Q[s][a_opt] = (1-alpha)*(self.Q[s][a_opt]) + (alpha)*(r + gamma*self.Q[s_next][a_prime_opt])
+            s = s_next
 
+            if done:
+                return # exit if episode reaches terminal
 
     def __str__(self):
         return "Q-Learning"
@@ -87,10 +98,16 @@ class QLearning(AbstractSolver):
             A function that takes the observation as an argument and returns
             the probabilities for each action in the form of a numpy array of length nA.
         """
-        ################################
-        #   YOUR IMPLEMENTATION HERE   #
-        ################################
-        return action_probs
+        
+        epsilon = self.options.epsilon
+        rand_float = np.random.rand()
+        if rand_float <= epsilon:
+            # print(f'epsilon={epsilon}, rand_float={rand_float}')
+            return np.random.choice(self.env.action_space.n)
+
+        policy = self.create_greedy_policy()
+
+        return policy(state)
 
 
 class Estimator:
